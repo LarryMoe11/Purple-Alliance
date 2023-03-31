@@ -2,7 +2,7 @@ import requests, json
 from flask import Flask, render_template, request, redirect
 
 global eventCode
-eventCode = "2023milak"
+# eventCode = "2023isde1"
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -40,62 +40,63 @@ def events():
       eventDataList.append(eventDataDict)
     EventData.close()
 
-    dataLength = len(data) - 2
-    htmlData = data[15:dataLength]
+    dataLength = len(data)
+    eventCodeLength = len(eventCode)
+    htmlData = data[eventCodeLength + 6:dataLength - 2]
     dataHTML = """
-    <!DOCTYPE html>
-    <html>
+<!DOCTYPE html>
+<html>
 
-    <head>
-      <meta charset='utf-8'>
-      <meta name='viewport' content='width=device-width'>
-      <title>PurpleAlliance - 2023milak</title>
-    </head>
-    <style>
-      html {
-        height: 100%;
-        width: 100%;
-      }
-    </style>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width'>
+  <title>PurpleAlliance - 2023milak</title>
+</head>
+<style>
+  html {
+    height: 100%;
+    width: 100%;
+  }
+</style>
 
-    <body>
-      <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>
-      <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
-      <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
-      <script type='text/javascript'>
-        var data = [""" + htmlData + """];
-        $(document).ready(function () {
-          var html = '<table class="table table-striped">';
-          html += '<tr>';
-          var flag = 0;
-          $.each(data[0], function (index, value) {
-            html += '<th>' + index + '</th>';
-          });
-          html += '</tr>';
-          $.each(data, function (index, value) {
-            html += '<tr>';
-            $.each(value, function (index2, value2) {
-              html += '<td>' + value2 + '</td>';
-            });
-            html += '<tr>';
-          });
-          html += '</table>';
-          $('body').html(html);
+<body>
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+  <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+  <script type='text/javascript'>
+    var data = [""" + htmlData + """];
+    $(document).ready(function () {
+      var html = '<table class="table table-striped">';
+      html += '<tr>';
+      var flag = 0;
+      $.each(data[0], function (index, value) {
+        html += '<th>' + index + '</th>';
+      });
+      html += '</tr>';
+      $.each(data, function (index, value) {
+        html += '<tr>';
+        $.each(value, function (index2, value2) {
+          html += '<td>' + value2 + '</td>';
         });
-      </script>
-    </body>
+        html += '<tr>';
+      });
+      html += '</table>';
+      $('body').html(html);
+    });
+  </script>
+</body>
 
-    </html>
+</html>
     """
 
     f = open("templates/" + eventCode + ".html", "w")
     f.write(dataHTML)
     f.close()
 
-    return redirect('/' + eventCode)
+    return redirect('/event/' + eventCode)
   else:  
     return render_template('events.html')
 
-@app.route('/' + eventCode, methods=['GET', 'POST'])
-def eventPage():
-  return render_template(eventCode + '.html')
+@app.route('/event/<path:event_id>', methods=['GET', 'POST'])
+def eventPage(event_id):
+  return render_template(event_id + '.html')
