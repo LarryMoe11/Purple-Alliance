@@ -26,7 +26,7 @@ def events():
         return render_template('index.html')
 
     EventData = open("eventData.json", "w")
-    data = json.dumps(pullData, sort_keys=True, indent=2)
+    data = json.dumps(pullData)
     EventData.write(data)
     EventData.close()
 
@@ -40,7 +40,53 @@ def events():
       eventDataList.append(eventDataDict)
     EventData.close()
 
-    dataHTML = "<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width'><title>PurpleAlliance - " + eventCode + "</title></head><style> html {height: 100%; width: 100%;}</style><body>" + str(eventDataList) + "</body></html>"
+    dataLength = len(data) - 2
+    htmlData = data[15:dataLength]
+    dataHTML = """
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+      <meta charset='utf-8'>
+      <meta name='viewport' content='width=device-width'>
+      <title>PurpleAlliance - 2023milak</title>
+    </head>
+    <style>
+      html {
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <body>
+      <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet'>
+      <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+      <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+      <script type='text/javascript'>
+        var data = [""" + htmlData + """];
+        $(document).ready(function () {
+          var html = '<table class="table table-striped">';
+          html += '<tr>';
+          var flag = 0;
+          $.each(data[0], function (index, value) {
+            html += '<th>' + index + '</th>';
+          });
+          html += '</tr>';
+          $.each(data, function (index, value) {
+            html += '<tr>';
+            $.each(value, function (index2, value2) {
+              html += '<td>' + value2 + '</td>';
+            });
+            html += '<tr>';
+          });
+          html += '</table>';
+          $('body').html(html);
+        });
+      </script>
+    </body>
+
+    </html>
+    """
 
     f = open("templates/" + eventCode + ".html", "w")
     f.write(dataHTML)
